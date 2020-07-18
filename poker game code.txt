@@ -1,0 +1,481 @@
+/**
+ *
+ * @Sowmitha Sangi
+ */
+import java.util.Random;
+import java.util.Arrays;
+import java.awt.Font;
+
+public class SOWMITHA_Project3{
+
+
+    //Constants for defining different modes (DO NOT CHANGE THOSE):
+    private static final int START = 0, PLAYERS_DELT = 1, FLOP_DELT = 2, TURN_DELT = 3, RIVER_DELT = 4;
+   
+   
+    /**
+    * You should already have this method that creates a deck
+    * Just copy and paste from your Project 2 (if it works, of course).
+    * 
+    * TO BE FINISHED BY YOU 
+    */    
+    private static int[] getDeck(){
+        //creating array of 52 ints for the deck of oness
+        int[] deck = new int[52];
+        for(int i=0;i<deck.length;i++)
+        deck[i] = i; 
+        return deck;
+    }   
+   
+   
+    /**
+    * You should already have this method for shuffling a deck
+    * Just copy and paste from your Project 2 (if it works, of course).
+    * 
+    * TO BE IMPLEMETED BY YOU 
+    */
+    public static void shuffle(int[] deck){
+         Random rand = new Random();
+        for(int i=0;i<deck.length/2;i++){
+            int deck1 = rand.nextInt(52);
+            int deck2 = rand.nextInt(52);                
+            if(deck1 != deck2){
+               int temp = deck[deck1];
+               deck[deck1] = deck[deck2];
+               deck[deck2] = temp;
+              }
+         } 
+    }  
+   
+   
+    /**
+    * This method takes an int number representing a ones and
+    * returns the String that would be used as a file name
+    * for the corresponding ones image.
+    * For example, input 0, should produce output "1h" (b/c Ace of hearts ones is represented by '1h.png');
+    * input 15, should have output "3d" (because 3 of diamonds ones is represented by '3d.png'), etc.
+    *
+    * TO BE IMPLEMETED BY YOU 
+    */
+    private static String getCard(int onesInt){
+        String Card="";
+            switch (onesInt/13){
+               case 0:
+                  Card=(onesInt%13+1)+"h";
+                  break;
+               case 1:
+                  Card=(onesInt%13+1)+"d";
+                  break;
+               case 2:
+                  Card=(onesInt%13+1)+"s";
+                  break;
+               case 3:
+                  Card=(onesInt%13+1)+"c";
+                  break;
+              }
+        return Card; //Queen of Spades
+    }
+   
+   
+    /**
+    * TO BE IMPLEMENTED BY YOU: 
+    * This method identifies the hand given.
+    * Input: int array representing 5 oness
+    * Returns: The String with the name of the hand
+    * For example, an input array {2, 15, 44, 24, 49 }
+    * should produce the output "Pair of 3s".
+    *
+    * TO BE IMPLEMETED BY YOU 
+    */
+       
+    public static String identifyHand(int[] hand){
+        System.out.print("      hand: ");
+        printA(hand);  
+        int[] rankCount = getRankCount(hand); // Calling getRankCount method
+        System.out.print("rank count: ");
+        printA(rankCount); 
+        //int numOfOnes=0, numOfPairs=0, numOfThrees=0, numOfFours=0;
+        //numOfOnes = numOf(rankCount, 1);
+        //numOfPairs = numOf(rankCount, 2);
+        //numOfThrees = numOf(rankCount, 3);
+        //numOfFours = numOf(rankCount, 4);
+        //System.out.println(numOfOnes + " " + numOfPairs + " " + numOfThrees + " " + numOfFours);
+        int ones = 0;
+        int pairs = 0;
+        int threes = 0;
+        int fours = 0;
+        int pairsCount = 0;
+        int threesCount=0;
+        String s = "No Pair";
+        for(int i = 0; i<=12; i++) {
+             if(rankCount[i] == 2) {                
+                 ones = i;
+                 pairs++;
+                 if(pairs == 1) {
+                    pairsCount = i;
+                    if(threes == 1) {
+                       s = "(" + onesRank(threesCount) + onesRank(pairsCount) + ")";
+                    }
+                        else {
+                           s = "Pair of " + onesRank(ones);
+                         }
+                    }
+
+                  }
+                        if(rankCount[i] == 3) {
+                        threes++;
+                        ones = i;
+                        threesCount = i;
+                           if(threes == 1) {
+                              if(pairs == 1) {
+                                 s = "(" + onesRank(ones) +  onesRank(pairsCount) + ")";
+                              }
+                              else {
+                                 s = "Three of " + onesRank(ones);
+                              }
+                 }
+             }
+                        if (rankCount[i] == 4) {
+                        fours++;
+                        ones = i;
+                           if(fours == 1) {
+                              s = "Four of " + onesRank(ones);
+                  }        
+              }
+         }    
+                  
+         return s;
+   
+    }        
+    
+     public static void printA(int[] rank) {
+        System.out.print("");
+        for (int i = 0; i <= rank.length - 2; i++)
+            System.out.print(rank[i] + ", ");
+        System.out.println(rank[rank.length - 1] + "");
+    }
+    
+     private static String onesRank(int r) {
+        int s = r+1;
+        switch (r) {
+            case 0:
+                return "Aces";
+            case 1:
+                return "Jacks";
+            case 2:
+                return "Queens";
+            case 3:
+                return "Kings";
+            default:
+                return s + "'s";
+        }
+    }
+    // This method is used to get the rank count of ones
+    
+    public static int[] getRankCount(int[] onesRank){ 
+    
+        int rank[] = new int[13];
+        for(int i=0; i <= 4; i++) {
+            int rank1 = onesRank[i] % 13;
+            rank[rank1] = rank[rank1]+1;
+        }
+        return rank;
+    }
+
+ 
+    //===============================================================================
+    // DO NOT CHANGE CODE BELOW THIS LINE
+    //===============================================================================  
+
+    
+    /**
+    * This method is called when 'Test Hand' button is pushed.
+    *
+    * It takes the current mode an the current test number as an input
+    * It then picks the corresponding test hand from the testBank (determined by testNo),
+    * updates the testNo, draws the test hand on the table.
+    * It then calls the identifyHand() method and draws the name of the hand above it.
+    * Returns updatet testNo, for the next time it is called.
+    *
+    * DON'T CHANGE IT!
+    * But read it carefully.
+    */     
+    private static int testHand(int mode, int testNo){
+        showButtonPushed(1);
+        resetTable();
+        int[][] testBank = { {2, 15, 44, 24, 49 },
+                              {0, 24, 35, 12, 50  },  
+                              {0, 24, 37, 13, 49  },
+                              {0, 24, 44, 13, 26  },
+                              {0, 24, 39, 13, 26  },
+                              {0, 24, 37, 13, 26   }
+                            };
+                     
+        int pick = testNo;
+        testNo=(testNo+1)%testBank.length;
+        int [] hand = testBank[pick];
+        //Draw hand in the middle of the table:
+        drawFlop(hand[0], hand[1], hand[2]);
+        drawTurn(hand[3]);
+        drawRiver(hand[4]);
+      
+        StdDraw.setFont(new Font("Arial", Font.BOLD, 24));
+        StdDraw.setPenColor(StdDraw.YELLOW);
+        //int[] hand={deck[4],deck[5],deck[6],deck[7],deck[8]};
+        StdDraw.text(5, 21, ""+hand[0]);
+        StdDraw.text(10, 21, ""+hand[1]);
+        StdDraw.text(15, 21, ""+hand[2]);
+        StdDraw.text(20, 21, ""+hand[3]);
+        StdDraw.text(25, 21, ""+hand[4]);
+  
+        StdDraw.text(15, 23, "Test hand: "+identifyHand(hand));
+        StdDraw.show();
+        return testNo;
+    }
+   
+
+ 
+    /**
+    * This method is called when the deck is clicked and
+    * it "deals" the oness on the table, depending on
+    * the current deck and the current mode (both are inputs).
+    *
+    * DON'T CHANGE IT!
+    * But read it carefully!
+    */        
+    private static void deal(int mode, int[] deck){
+        switch(mode){
+            case(START):
+                resetTable();
+                StdDraw.setFont(new Font("Arial", Font.BOLD, 24));
+                StdDraw.setPenColor(StdDraw.WHITE);         
+                StdDraw.text(15, 3, "You:");
+                StdDraw.picture(19, 4,"/pics/"+getCard(deck[0])+".png",4.2,6,5);
+                StdDraw.picture(23, 4,"/pics/"+getCard(deck[2])+".png",4.2,6,-5);
+                     
+                StdDraw.text(12.7, 29, "Computer:");
+                StdDraw.picture(23, 28,"/pics/"+getCard(deck[1])+".png",4.2,6,-5);
+                StdDraw.picture(19, 28,"/pics/"+getCard(deck[3])+".png",4.2,6,5);
+                break;
+            case(PLAYERS_DELT):
+                drawFlop(deck[4],deck[5],deck[6]);
+                break;
+            case(FLOP_DELT):
+                drawTurn(deck[7]);
+                break;
+            case(TURN_DELT):
+                drawRiver(deck[8]);
+                //Form a hand array:
+                int[] hand={deck[4],deck[5],deck[6],deck[7],deck[8]};
+                StdDraw.text(15, 21, "Hand on the table: "+identifyHand(hand));
+                break;
+            default: 
+                System.out.println("All oness are dealt.");
+        }
+        StdDraw.show();
+    }
+    
+    
+       
+    /**
+    * This method
+    * "Pushes" New Game button.
+    * Resets the table.
+    * Suffles the deck. 
+    *
+    * DON'T CHANGE IT!
+    */  
+    private static void newGame(int mode, int[] deck){
+        showButtonPushed(2);
+        resetTable();
+        shuffle(deck);
+    }
+
+   // DON'T CHANGE THIS METHOD!
+   private static void drawFlop(int c1, int c2, int c3){
+       StdDraw.picture(5,  17,"/pics/"+getCard(c1)+".png",4.3,6,0);
+       StdDraw.picture(10, 17,"/pics/"+getCard(c2)+".png",4.3,6,0);
+       StdDraw.picture(15, 17,"/pics/"+getCard(c3)+".png",4.3,6,0);   
+   }
+   
+   // DON'T CHANGE THIS METHOD!   
+   private static void drawTurn(int tc){
+       StdDraw.picture(20,  17,"/pics/"+getCard(tc)+".png",4.3,6,0);
+   }
+   
+   // DON'T CHANGE THIS METHOD!   
+   private static void drawRiver(int rc){
+       StdDraw.picture(25,  17,"/pics/"+getCard(rc)+".png",4.3,6,0);
+   }    
+
+   // DON'T CHANGE THIS METHOD!
+   private static boolean deckClicked(double x, double y){
+      if (x>3 && x<=9 && y>1 && y<7) 
+         return true;
+      return false;
+   }  
+   
+   // DON'T CHANGE THIS METHOD!    
+   private static boolean buttonNewGameClicked(double x, double y){
+      if (x>15 && x<=30 && y>32 && y<35) 
+         return true;
+      return false;
+   }
+
+   // DON'T CHANGE THIS METHOD!    
+   private static boolean testHandClicked(double x, double y){
+      if (x>0 && x<15 && y>32 && y<35) 
+         return true;
+      return false;
+   }
+
+   // DON'T CHANGE THIS METHOD!    
+   private static void resetTable(){    
+      StdDraw.clear(); //Erase the whole window
+      StdDraw.setPenColor(7, 160, 70);
+      StdDraw.filledRectangle(15, 16, 15,16);   //redraw the green canvas      
+      drawButton(1); //redraw the first button   
+      drawButton(2); //redraw the second button
+      drawDeckBack(); //redraw the back of the deck
+      StdDraw.setPenColor(StdDraw.WHITE);
+      StdDraw.setPenRadius(0.006);
+      StdDraw.rectangle(5, 17, 1.8, 2.8); 
+      StdDraw.rectangle(10, 17, 1.8, 2.8); 
+      StdDraw.rectangle(15, 17, 1.8, 2.8); 
+      StdDraw.setPenRadius(0.003);
+      StdDraw.line(2.8,13.5, 17.2, 13.5);        
+      StdDraw.line(2.8,13.5, 2.7, 13.8);
+      StdDraw.line(17.2,13.5, 17.3, 13.8); 
+      StdDraw.text(10, 12.7, "Flop");
+        
+      StdDraw.setPenRadius(0.006);
+      StdDraw.rectangle(20, 17, 1.8, 2.8); 
+      StdDraw.text(20, 13, "Turn");
+      StdDraw.rectangle(25, 17, 1.8, 2.8);
+      StdDraw.text(25, 13, "River"); 
+      StdDraw.show();
+   }
+
+    // DON'T CHANGE THIS METHOD!    
+    private static void drawButton(int buttonNumber){
+        if(buttonNumber==1){    
+            //Draw two rectangles to represent a "button": 
+            StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+            StdDraw.filledRectangle(7.5, 33.5, 7.5, 1.5);
+            StdDraw.setPenColor(200,200,200);
+            StdDraw.filledRectangle(7.5, 33.5, 7.2, 1.2);
+            //Write "What hand?" on the button:
+            StdDraw.setFont(new Font("Arial", Font.BOLD, 24));
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.text(7.5, 33.5, "Test hand");
+        }else if (buttonNumber==2){
+            //Draw two rectangles to represent a "button": 
+            StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+            StdDraw.filledRectangle(22.5, 33.5, 7.5, 1.5);
+            StdDraw.setPenColor(200,200,200);
+            StdDraw.filledRectangle(22.5, 33.5, 7.2, 1.2);
+            //Write "NEW GAME" on the button:
+            StdDraw.setFont(new Font("Arial", Font.BOLD, 24));
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.text(22.5, 33.5, "NEW GAME");
+        }else{}
+        StdDraw.show();
+    }
+    
+    /**
+    * Imitates a button being "pushed" by briefly changing the color
+    * 
+    * DON'T CHANGE THIS METHOD!
+    */
+    private static void showButtonPushed(int buttonNumber) {
+        if(buttonNumber==1){
+            StdDraw.setPenColor(220, 220, 220);
+            StdDraw.filledRectangle(7.5, 33.5, 7.2, 1.2);
+            Font font = new Font("Arial", Font.BOLD, 24);
+            StdDraw.setPenColor(150, 150, 255);
+            StdDraw.setFont(font);
+            StdDraw.text(7.5, 33.5, "Test hand");
+            StdDraw.show();
+            StdDraw.pause(177);
+            drawButton(buttonNumber);
+            StdDraw.show();
+        }else if (buttonNumber==2){
+            StdDraw.setPenColor(220, 220, 220);
+            StdDraw.filledRectangle(22.5, 33.5, 7.2, 1.2);
+            Font font = new Font("Arial", Font.BOLD, 24);
+            StdDraw.setPenColor(150, 150, 255);
+            StdDraw.setFont(font);
+            StdDraw.text(22.5, 33.5, "NEW GAME");
+            StdDraw.show();
+            StdDraw.pause(177);
+            drawButton(buttonNumber);
+            StdDraw.show();
+        }else{}
+        StdDraw.show();
+    }
+   
+    // DON'T CHANGE THIS METHOD!    
+    private static void drawDeckBack(){       
+        //Draw deck:
+        for(int i = 0; i<5; i++)
+            StdDraw.picture(4+i*0.2,4.2-0.02*i,"/pics/back.png",4,6,0);
+        StdDraw.show();
+    }
+
+    
+
+    
+    // DON'T CHANGE THE MAIN. 
+    //But do read it carefully.    
+    public static void main ( String[] args ) {
+        StdDraw.setCanvasSize(600,760);
+        StdDraw.enableDoubleBuffering(); //sets double buffering 
+        StdDraw.setXscale(0,30);
+        StdDraw.setYscale(-3,35);
+       
+        //The mode variable describes which mode the game is in: starting mode, or "X-s turn" mode, and so on.
+        int mode = START;
+        
+        int[] deck = getDeck();
+        shuffle(deck);
+        double mx, my; //will be used to hold mous click coordinates
+        
+        int testNo=0; //indicate which test will be performed when testHand is called
+       
+        resetTable();
+       
+               
+        //The loop that is waiting for mouse clicks:
+        while (true) {
+            if (StdDraw.isMousePressed()) {  //if there is a mouse click, process it and follow the main game logic
+                    
+                mx = StdDraw.mouseX(); //x-coordinate of the mouse
+                my = StdDraw.mouseY(); //y-coordinate of the mose
+                StdDraw.pause(200); //Pauses for a bit after a mouse click, to avoid multiple mouse events. DO NOT REMOVE!
+                     
+                    //================================================================================ 
+                    //Main game logic: different action is taken on mouse click depending where it clicked and on the mode:
+                    //================================================================================
+                if (deckClicked(mx, my)){
+                   deal(mode,deck);
+                   if (mode==START) mode=PLAYERS_DELT;
+                   else if (mode==PLAYERS_DELT) mode=FLOP_DELT;
+                   else if (mode==FLOP_DELT) mode=TURN_DELT;
+                   else if (mode==TURN_DELT) mode=RIVER_DELT;
+                }else if (buttonNewGameClicked(mx,my)){
+                   newGame(mode,deck);
+                   mode=START;
+                }else if (testHandClicked(mx,my)){
+                   testNo=testHand(mode, testNo);
+                   mode=START;
+                }else {
+                           //Do nothing
+                           //Other options may be added later.
+                }
+                StdDraw.pause(300);//Pauses for a bit more after processing a mouse click, to avoid multiple mouse events. DO NOT REMOVE!            
+            }// end of if (isMousePressed())
+            
+        }// end of while loop  
+    }// end of main
+    
+}
